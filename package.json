@@ -1,0 +1,23 @@
+{
+  "name": "punaday",
+  "version": "1.0.0",
+  "description": "Daily Pun Ticker",
+  "main": "public/index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Snickdx/punaday.git"
+  },
+  "author": "Snickdx",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Snickdx/punaday/issues"
+  },
+  "homepage": "https://github.com/Snickdx/punaday#readme",
+  "dependencies": {
+    "path": "^0.12.7",
+    "sw-precache": "^4.3.0"
+  }
+}
