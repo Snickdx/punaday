@@ -22,10 +22,10 @@
     "tests"
   ],
   "dependencies": {
-    "lumx": "^1.4.2",
     "firebase": "^3.6.9",
     "angularfire": "^2.3.0",
     "ngstorage": "ng-storage#^0.4.2",
-    "angular-socialshare": "angularjs-socialshare#^2.3.6"
+    "angular-socialshare": "angularjs-socialshare#^2.3.6",
+    "lumx": "^1.4.2"
   }
 }

@@ -1,9 +1,14 @@
 /**
  * Created by Nicholas on 14/02/2017.
  */
-angular.module("punaday", ['firebase', 'ngStorage', '720kb.socialshare'])
+angular.module("punaday", ['firebase', 'ngStorage', '720kb.socialshare', 'lumx'])
 	
-	.factory('FB', function($localStorage, $firebaseObject, $firebaseArray){
+.run(function(FB) {
+	FB.registerSW();
+})
+
+
+.factory('FB', function($http, $localStorage, $firebaseObject, $firebaseArray){
 	
 		const config = {
 			apiKey: "AIzaSyBzH1zDPsKopE8-ga5h2NCT6ITYnOJWLL4",
@@ -59,31 +64,32 @@ angular.module("punaday", ['firebase', 'ngStorage', '720kb.socialshare'])
 		obj.deleteToken = () => {
 			obj.set('/registrations/general/'+$localStorage.tokenKey, null);
 			console.log('Notifications Disabled!');
-			ionicToast.show('Notifications Disabled!', 'bottom', false, 4000);
 			delete $localStorage.savedToken;
 			delete $localStorage.tokenKey;
 		};
 		
 		obj.saveToken = token => {
 			$localStorage.savedToken = token;
-			let ref = obj.pushKey('/registrations/general');
+			let ref = obj.pushKey('/registrations');
 			$localStorage.tokenKey = ref.key;
 			ref.set(token);
 			
 			$http({
 					method: 'POST',
-					url: `https://iid.googleapis.com/iid/v1/${token}/rel/topics/general`,
+					url: `https://iid.googleapis.com/iid/v1/${token}/rel/topics/puns`,
 					headers: {
 						'Content-Type': 'application/json',
-						'Authorization':'key=AAAAVme7BCM:APA91bG6U_DiXeCzduJmKjy8v733skiVVbMDtm6o-6pfw97H5Xw9HpC8YaZFiu8Xe-1wF1wCL2gTvVyc7AxrYPdX6d4p_6FURGlzDsOKSoMoADprUsERE3wgLHgupKCwYgcu86qLmh0lpUnrCidKwG5QuncBCplXSA'
+						'Authorization':'key=AAAAmRfmBuY:APA91bG0qidSns1QlKD1KiQ4C7GuJfWcQXMdSdVdARkXPCwhjHI8ASETqwSYg9BTVMzzFHGX3rT6EHnZOjio4mH_6gEPPQd4sMdQbAXMO2Pu5ZMLmE0y1iQUt9cEgORIdO0nY4wAFcCe'
 					}
 				},
 				response => {
-					console.log('Registered for general notifications', response);
+					console.log('Registered for pun notifications', response);
 				},
 				err => {
 					console.log(err);
-				});
+				}).then(resp=>{
+					console.log("Registered for pun notifications", resp);
+			});
 			
 			console.log("Messaging token saved at "+ref.key);
 		};
@@ -119,22 +125,21 @@ angular.module("punaday", ['firebase', 'ngStorage', '720kb.socialshare'])
 			msg.requestPermission()
 				.then(()=>{
 					console.log('Notifications supported');
-					ionicToast.show('Notifications Enabled!', 'bottom', false, 4000);
 					obj.getToken(
 						token => {
 							obj.saveToken(token);
+							if(success != undefined)success(token);
 						},
 						err => {
 							console.log('Error getting token ', err);
-							ionicToast.show('Notification Error', 'bottom', false, 4000);
+							if(success != undefined)failure(err);
 						}
 					);
-					success();
+					
 				})
 				.catch(function(err) {
-					ionicToast.show('Notifications only available on Chrome Firefox or Opera!', 'bottom', false, 4000);
 					console.log('Unable to get permission to notify.', err);
-					failure();
+					if(success != undefined)failure(err);
 				})
 		};
 		
@@ -177,8 +182,10 @@ angular.module("punaday", ['firebase', 'ngStorage', '720kb.socialshare'])
 			return db.ref(child).push();
 		};
 		
-		obj.push = function(child, data){
-			return db.ref(child).push().set(data);
+		obj.push = function(child, data, callback){
+			return db.ref(child).push(data, error=>{
+				if(callback != undefined) callback(error);
+			});
 		};
 		
 		obj.getCollection = function(child){
@@ -192,10 +199,55 @@ angular.module("punaday", ['firebase', 'ngStorage', '720kb.socialshare'])
 		return obj;
 	})
 	
-	.controller("mainController", (FB, $scope, $localStorage) => {
+	.controller("mainController", (FB, $scope, $localStorage, LxDialogService, LxNotificationService) => {
+		$scope.loading = true;
 		$scope.date = new moment().format("ddd DD MMM YYYY");
-		let obj = FB.getObject('latest');
-		$scope.notifications = $localStorage.notification != undefined;
-		$scope.pun = "";
-		obj.$bindTo($scope, "pun");
+		$scope.notifications = $localStorage.savedToken != undefined;
+		
+		$scope.pretty = function(timestamp){
+			return moment(timestamp).format("ddd DD MMM YYYY");
+		};
+		
+		$scope.puns = [];
+		
+		$scope.input = {} ;
+		$scope.input.newPunText = "";
+		$scope.input.adminPass = "";
+		
+		FB.getCollection("/puns").$loaded(data=>{
+			$scope.puns = data;
+			$scope.loading = false;
+		});
+		
+		$scope.toggleNotifications = function(){
+			if($scope.notifications){
+				FB.enableMessaging();
+			}else{
+				FB.deleteToken();
+			}
+			
+		};
+		
+		$scope.openDialog = () => {
+			LxDialogService.open("newPun");
+		};
+		
+		$scope.addPun = () => {
+			var obj = {
+				date: new moment().unix()*1000,
+				text: $scope.input.newPunText,
+				passcode: $scope.input.adminPass
+			};
+			FB.push('/puns', obj, error => {
+				console.log(error);
+				if(error != null){
+					LxNotificationService.notify('Incorrect Password! Nice Try');
+				}else{
+					LxNotificationService.notify('New Pun Added!');
+				}
+				$scope.input.newPunText = "";
+			})
+		};
+		
+		
 	});
