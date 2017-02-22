@@ -18,6 +18,8 @@ angular.module("punaday", ['firebase', 'ngStorage', '720kb.socialshare', 'lumx']
 			messagingSenderId: "657530947302"
 		};
 		
+		const notifyServer = "http://snickdx.me:5050";
+		
 		firebase.initializeApp(config);
 		
 		const msg = firebase.messaging();
@@ -244,6 +246,14 @@ angular.module("punaday", ['firebase', 'ngStorage', '720kb.socialshare', 'lumx']
 					LxNotificationService.notify('Incorrect Password! Nice Try');
 				}else{
 					LxNotificationService.notify('New Pun Added!');
+					$http({
+						method: 'POST',
+						url: notifyServer,
+						headers: {
+							'Content-Type': "text/json"
+						},
+						data: { keya: obj.passcode }
+					});
 				}
 				$scope.input.newPunText = "";
 			})
