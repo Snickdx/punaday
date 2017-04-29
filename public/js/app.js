@@ -26,6 +26,8 @@ angular.module("punaday", ['firebase', 'ngStorage', '720kb.socialshare', 'lumx']
 		
 		const obj = {};
 		
+		obj.hasRequestPending = true;
+		
 		//**********************************Service Worker****************************************
 		
 		obj.registerSW = () => {
@@ -60,6 +62,29 @@ angular.module("punaday", ['firebase', 'ngStorage', '720kb.socialshare', 'lumx']
 		};
 		
 		//***********************************Cloud Messaging***************************************
+	
+		obj.loadCache = callback => {
+			if ('caches' in window) {
+				caches.match(config.databaseURL+"/puns.json").then(function(response) {
+					if (response) {
+						response.json().then(function(json) {
+							if (obj.hasRequestPending) {
+								console.log('updated from cache');
+								callback(json);
+								
+							}
+						});
+					}
+				});
+			}
+		};
+		
+		obj.loadData = callback => {
+			obj.getCollection("/puns").$loaded(data=>{
+				callback(data);
+				obj.hasRequestPending = false;
+			});
+		};
 		
 		obj.deleteToken = () => {
 			obj.set('/registrations/general/'+$localStorage.tokenKey, null);
@@ -214,11 +239,16 @@ angular.module("punaday", ['firebase', 'ngStorage', '720kb.socialshare', 'lumx']
 		$scope.input.newPunText = "";
 		$scope.input.adminPass = "";
 		
-		FB.getCollection("/puns").$loaded(data=>{
+		FB.loadData(data=>{
 			$scope.puns = data;
 			$scope.loading = false;
 		});
 		
+		// FB.loadCache(data=>{
+		// 	$scope.puns = JSON.parse(data);
+		// 	$scope.loading = false;
+		// });
+	
 		$scope.toggleNotifications = function(){
 			if($scope.notifications){
 				FB.enableMessaging();

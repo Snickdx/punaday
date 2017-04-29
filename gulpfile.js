@@ -14,6 +14,18 @@ gulp.task('generate-service-worker', function(callback) {
 				'bower_components/firebase/firebase.js',
 				'js/FCMScript.js'
 			],
+			runtimeCaching: [
+				{
+					urlPattern: "https://punaday-6e65f.firebaseio.com/puns.json",
+					handler: 'fastest',
+					options: {
+						cache: {
+							maxEntries: 10,
+							name: 'puns-cache'
+						}
+					}
+				}
+			]
 		},
 		callback
 	);
