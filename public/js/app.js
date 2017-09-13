@@ -244,10 +244,10 @@ angular.module("punaday", ['firebase', 'ngStorage', '720kb.socialshare', 'lumx']
 			$scope.loading = false;
 		});
 		
-		// FB.loadCache(data=>{
-		// 	$scope.puns = JSON.parse(data);
-		// 	$scope.loading = false;
-		// });
+		FB.loadCache(data=>{
+			$scope.puns = JSON.parse(data);
+			$scope.loading = false;
+		});
 	
 		$scope.toggleNotifications = function(){
 			if($scope.notifications){

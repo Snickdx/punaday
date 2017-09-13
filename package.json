@@ -18,6 +18,7 @@
   "homepage": "https://github.com/Snickdx/punaday#readme",
   "dependencies": {
     "path": "^0.12.7",
-    "sw-precache": "^4.3.0"
+    "sw-precache": "^4.3.0",
+    "sw-toolbox": "^3.6.0"
   }
 }
