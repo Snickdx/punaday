@@ -2,10 +2,12 @@
   "name": "Pun A Day",
   "short_name": "Punaday",
   "start_url": "index.html",
-  "display": "standalone",
+  "display": "fullscreen",
   "background_color": "white",
   "theme_color": "blue",
   "orientation": "portrait",
+	"scope":"/",
+	"version": 1.1,
   "gcm_sender_id":"103953800507",
 	"icons": [
 		{

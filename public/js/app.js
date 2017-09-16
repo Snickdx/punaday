@@ -32,7 +32,7 @@ angular.module("punaday", ['firebase', 'ngStorage', '720kb.socialshare', 'lumx']
 		
 		obj.registerSW = () => {
 			if ('serviceWorker' in navigator) {
-				navigator.serviceWorker.register('service-worker.js').then(function(reg) {
+				navigator.serviceWorker.register('service-worker.js',  {scope: '/'}).then(function(reg) {
 					
 					msg.useServiceWorker(reg);
 					reg.onupdatefound = function() {
