@@ -17,8 +17,10 @@
   },
   "homepage": "https://github.com/Snickdx/punaday#readme",
   "dependencies": {
+    "gulp": "^3.9.1",
     "path": "^0.12.7",
     "sw-precache": "^4.3.0",
-    "sw-toolbox": "^3.6.0"
+    "sw-toolbox": "^3.6.0",
+    "workbox-build": "^2.0.1"
   }
 }
