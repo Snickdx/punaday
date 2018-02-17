@@ -1,17 +1,17 @@
 {
-	"rules": {
-		"registrations":{
-			".write":true,
-			".read":true
-		},
-		"puns":{
-			".read":true,
-			".write": true,
-			"$pun":{
-				".validate":"newData.child('passcode').val() == 'adminKey'"
-			}
-		},
-		".read": true,
-		".write": true
-	}
+  "rules": {
+    "registrations": {
+      ".write": true,
+      ".read": true
+    },
+    "puns": {
+      ".read": true,
+      ".write": true,
+      "$pun": {
+        ".validate": "newData.child('passcode').val() == 'adminKey'"
+      }
+    },
+    ".read": true,
+    ".write": true
+  }
 }

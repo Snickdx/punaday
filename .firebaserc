@@ -1,5 +1,6 @@
 {
   "projects": {
-    "punaday": "punaday-6e65f"
+    "punaday": "punaday-6e65f",
+    "default": "punaday-6e65f"
   }
 }

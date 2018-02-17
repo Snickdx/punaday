@@ -6,7 +6,7 @@
   "background_color": "white",
   "theme_color": "blue",
   "orientation": "portrait",
-	"scope":"./",
+	"scope":".",
 	"version": 1.1,
   "gcm_sender_id":"103953800507",
 	"icons": [
